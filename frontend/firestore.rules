@@ -1,18 +1,50 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2025, 7, 18);
+
+    // Helper function to check if a user is an admin.
+    // This looks up the user's profile in the 'users' collection and checks their 'role'.
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      // Allow read access if:
+      // 1. The request is from an admin OR
+      // 2. The user is requesting their own document.
+      allow read: if request.auth != null && (isAdmin() || request.auth.uid == userId);
+
+      // Allow users to create their own user document (e.g., on signup).
+      // The role must be 'tenant' by default to prevent self-promotion to admin.
+      allow create: if request.auth.uid == userId && request.resource.data.role == 'tenant';
+
+      // Allow a user to update their own document, but NOT their role.
+      // Only an admin should be able to change a user's role.
+      allow update: if request.auth.uid == userId && request.resource.data.role == resource.data.role;
+    }
+
+    // Rules for the 'buildings' collection
+    match /buildings/{buildingId} {
+      // Only admins can create, update, or delete building information.
+      allow write: if request.auth != null && isAdmin();
+      // Any authenticated user can read building information (e.g., to see their building's name).
+      allow read: if request.auth != null;
+    }
+
+    // Rules for the 'payments' collection
+    match /payments/{paymentId} {
+      // Allow read access if the payment belongs to the user or if the user is an admin.
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Allow a user to create a payment record only for themselves.
+      // Ensures the 'userId' field in the new payment document matches their own ID.
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+
+      // DISALLOW updates and deletes to maintain a perfect, immutable audit trail.
+      // To "correct" a payment, an admin should log a new, counteracting transaction.
+      allow update, delete: if false;
     }
   }
 }
