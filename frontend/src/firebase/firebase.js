@@ -14,10 +14,23 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
+// Debug Firebase config
+console.log('Firebase config:', {
+  apiKey: firebaseConfig.apiKey ? 'SET' : 'MISSING',
+  authDomain: firebaseConfig.authDomain ? 'SET' : 'MISSING',
+  projectId: firebaseConfig.projectId ? 'SET' : 'MISSING',
+  storageBucket: firebaseConfig.storageBucket ? 'SET' : 'MISSING',
+  messagingSenderId: firebaseConfig.messagingSenderId ? 'SET' : 'MISSING',
+  appId: firebaseConfig.appId ? 'SET' : 'MISSING',
+  measurementId: firebaseConfig.measurementId ? 'SET' : 'MISSING'
+});
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+console.log('Firebase initialized successfully');
 
 export { app, analytics, auth, db };

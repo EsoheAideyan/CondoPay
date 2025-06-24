@@ -3,6 +3,7 @@ import { ProtectedRoute, AdminRoute, LoginRoute } from '../components/routes';
 import Login from '../pages/login';
 import Dashboard from '../pages/dashboard';
 import Register from '../pages/register';
+import RegisterRentalInfo from '../pages/registerRentalInfo';
 import Admin from '../pages/admin';
 import Payments from '../pages/payments';
 
@@ -15,6 +16,7 @@ export default function AppRoutes() {
                 </LoginRoute>
             } />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/rental-info" element={<RegisterRentalInfo />} />
             
             {/* Protected Routes */}
             <Route path="/dashboard" element={

@@ -1,102 +1,58 @@
-import {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { User as FirebaseUser } from 'firebase/auth';
-import { auth, db} from '../firebase/firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth, db } from '../firebase/firebase';
 
 export const useAuth = () => {
-    const [user, setUser] = useState<any>(null);
-    const [firebaseUser, loading, error] = useAuthState(auth);
-    const [isAdmin, setIsAdmin] = useState<boolean>(false);
-    const [userLoading, setUserLoading] = useState<boolean>(false);
-    const isMountedRef = useRef(true);
+  const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const isMountedRef = useRef(true);
 
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            isMountedRef.current = false;
-        };
-    }, []);
+  useEffect(() => {
+    isMountedRef.current = true;
 
-    // Monitor user state changes
-    useEffect(() => {
-        console.log('User state changed to:', user);
-    }, [user]);
-
-    useEffect(() => {
-        const fetchUser = async (firebaseUser : FirebaseUser) => {
-            if (!isMountedRef.current) return;
-            
-            setUserLoading(true);
-            try {
-                console.log('Fetching user data for:', firebaseUser.uid);
-                const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-                
-                if (!isMountedRef.current) return;
-                
-                if (userDoc.exists()){
-                    const userData = userDoc.data();
-                    console.log('User data found:', userData);
-                    
-                    const userObject = {
-                        uid: firebaseUser.uid,
-                        email: firebaseUser.email,
-                        userName: userData.userName || userData.displayName || firebaseUser.displayName,
-                        ...userData
-                    };
-                    
-                    console.log('Setting user object:', userObject);
-                    setUser(userObject);
-                    setIsAdmin(userData.role === 'admin');
-                    console.log('User state set, isAdmin:', userData.role === 'admin');
-                } else {
-                    console.log('User document does not exist in Firestore');
-                    // Set basic user info even if Firestore document doesn't exist
-                    const userObject = {
-                        uid: firebaseUser.uid,
-                        email: firebaseUser.email,
-                        userName: firebaseUser.displayName
-                    };
-                    console.log('Setting basic user object:', userObject);
-                    setUser(userObject);
-                    setIsAdmin(false);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                if (!isMountedRef.current) return;
-                
-                // Set basic user info even if there's an error
-                const userObject = {
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    userName: firebaseUser.displayName
-                };
-                console.log('Setting user object after error:', userObject);
-                setUser(userObject);
-                setIsAdmin(false);
-            } finally {
-                if (isMountedRef.current) {
-                    setUserLoading(false);
-                }
-            }
-        };
-        
-        if (firebaseUser) {
-            fetchUser(firebaseUser);
-        } else {
-            console.log('No Firebase user, clearing user state');
-            if (isMountedRef.current) {
-                setUser(null);
-                setIsAdmin(false);
-                setUserLoading(false);
-            }
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        if (isMountedRef.current) {
+          setUser(null);
+          setIsAdmin(false);
+          setLoading(false);
         }
-    }, [firebaseUser]);
+        return;
+      }
 
-    // Combine loading states
-    const isLoading = loading || userLoading;
+      try {
+        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+        const userData = userDoc.exists() ? userDoc.data() : {};
 
-    console.log('useAuth hook state - user:', user, 'isAdmin:', isAdmin, 'loading:', isLoading);
+        const userObject = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          userName: userData.userName || firebaseUser.displayName,
+          ...userData,
+        };
 
-    return { user, isAdmin, loading: isLoading, error };
+        if (isMountedRef.current) {
+          setUser(userObject);
+          setIsAdmin(userData.role === 'admin');
+        }
+      } catch (err) {
+        console.error("Error loading user data:", err);
+        if (isMountedRef.current) {
+          setUser({ uid: firebaseUser.uid, email: firebaseUser.email });
+          setIsAdmin(false);
+        }
+      } finally {
+        if (isMountedRef.current) setLoading(false);
+      }
+    });
+
+    return () => {
+      isMountedRef.current = false;
+      unsubscribe();
+    };
+  }, []);
+
+  return { user, isAdmin, loading };
 };

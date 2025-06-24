@@ -14,7 +14,7 @@ export const PasswordInput = ({
     value,
     onChange,
     placeholder = "Password",
-    label = "Password",
+    label = "Password *",
     required = false,
     className = "",
     error
