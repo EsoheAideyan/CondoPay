@@ -8,8 +8,8 @@ import { PasswordInput } from '../components/common/PasswordInput';
 export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [FirstName, setFirstName] = useState('');
+    const [LastName, setLastName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [userName, setUserName] = useState('');
     const [error, setError] = useState('');
@@ -19,11 +19,11 @@ export default function Register() {
 
     // Auto-generate username when first name or last name changes
     useEffect(() => {
-        if (firstName && lastName) {
-            const baseUsername = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+        if (FirstName && LastName) {
+            const baseUsername = `${FirstName.toLowerCase()}.${LastName.toLowerCase()}`;
             setUserName(baseUsername);
         }
-    }, [firstName, lastName]);
+    }, [FirstName, LastName]);
 
     // Check if username already exists
     const checkUsernameAvailability = async (username: string) => {
@@ -65,7 +65,7 @@ export default function Register() {
 
         try {
             // Generate unique username
-            const baseUsername = `${firstName.toLowerCase()}.${lastName.toLowerCase()}`;
+            const baseUsername = `${FirstName.toLowerCase()}.${LastName.toLowerCase()}`;
             const uniqueUsername = await generateUniqueUsername(baseUsername);
             setUserName(uniqueUsername);
 
@@ -73,15 +73,15 @@ export default function Register() {
             const personalInfo = {
                 email,
                 password,
-                firstName,
-                lastName,
+                FirstName,
+                LastName,
                 phoneNumber,
                 userName: uniqueUsername
             };
             sessionStorage.setItem('registration_personal_info', JSON.stringify(personalInfo));
 
             // Navigate to rental information step
-            navigate('/registerRentalInfo');
+            navigate('/register/rental-info');
             
         } catch (error: any) {
             console.error("Error in registration step 1:", error);
@@ -120,7 +120,7 @@ export default function Register() {
                                 type="text"
                                 placeholder="Enter your first name"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                value={firstName}
+                                value={FirstName}
                                 onChange={(e) => setFirstName(e.target.value)}
                                 required
                             />
@@ -134,7 +134,7 @@ export default function Register() {
                                 type="text"
                                 placeholder="Enter your last name"
                                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                value={lastName}
+                                value={LastName}
                                 onChange={(e) => setLastName(e.target.value)}
                                 required
                             />
@@ -159,7 +159,7 @@ export default function Register() {
                                 )}
                             </div>
                             <p className="text-xs text-gray-500 mt-1">
-                                Username will be auto-generated as: {firstName && lastName ? `${firstName.toLowerCase()}.${lastName.toLowerCase()}` : 'firstname.lastname'}
+                                Username will be auto-generated as: {FirstName && LastName ? `${FirstName.toLowerCase()}.${LastName.toLowerCase()}` : 'firstname.lastname'}
                             </p>
                         </div>
                         
@@ -204,7 +204,7 @@ export default function Register() {
                     <div className="flex items-center justify-between pt-6">
                         <button
                             type="submit"
-                            disabled={loading || !firstName || !lastName || !email || !password || !phoneNumber}
+                            disabled={loading || !FirstName || !LastName || !email || !password || !phoneNumber}
                             className="w-full px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             {loading ? 'Processing ...' : 'Next'}

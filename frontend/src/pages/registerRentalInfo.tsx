@@ -48,15 +48,15 @@ export default function RegisterRentalInfo() {
                     email: userCredential.user.email,
                     userName: personalInfo.userName || userCredential.user.displayName || 'New User',
                     role: 'tenant', // tenant, admin
-                    firstName: personalInfo.firstName,
-                    lastName: personalInfo.lastName,
-                    phone: personalInfo.phone,
+                    FirstName: personalInfo.FirstName,
+                    LastName: personalInfo.LastName,
+                    phoneNumber: personalInfo.phoneNumber,
                     buildingId: buildingId,
                     unitNo: unitNo,
                     leaseStartDate: leaseStartDate,
                     leaseEndDate: leaseEndDate,
                     monthlyRent: parseFloat(monthlyRent) || 0,
-                    status: 'active', // active, inactive, pending
+                    status: 'pending', // Set to pending for admin approval
                     createdAt: new Date(),
                     updatedAt: new Date()
                 };
