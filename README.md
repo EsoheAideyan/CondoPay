@@ -56,7 +56,7 @@ CondoPay is a web application designed to modernize rent payments and management
 
 4. **Run the app**
    ```bash
-   npm run dev
+   npm start
    ```
 
 5. **Run tests**
