@@ -46,20 +46,28 @@ export default function Dashboard() {
     };
 
     const renderAdminTabContent = () => {
+        console.log('Dashboard: Rendering admin tab content for activeTab:', activeTab);
         switch (activeTab) {
             case 'overview':
+                console.log('Dashboard: Rendering AdminOverviewTab');
                 return <AdminOverviewTab />;
             case 'tenants':
+                console.log('Dashboard: Rendering AdminTenantsTab');
                 return <AdminTenantsTab />;
             case 'payments':
+                console.log('Dashboard: Rendering AdminPaymentsTab');
                 return <AdminPaymentsTab />;
             case 'maintenance':
+                console.log('Dashboard: Rendering AdminMaintenanceTab');
                 return <AdminMaintenanceTab />;
             case 'reports':
+                console.log('Dashboard: Rendering AdminReportsTab');
                 return <AdminReportsTab />;
             case 'settings':
+                console.log('Dashboard: Rendering AdminSettingsTab');
                 return <AdminSettingsTab />;
             default:
+                console.log('Dashboard: Rendering default AdminOverviewTab');
                 return <AdminOverviewTab />;
         }
     };

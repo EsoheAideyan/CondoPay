@@ -30,10 +30,16 @@ export const useAuth = () => {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           userName: userData.userName || firebaseUser.displayName,
+          phoneNumber: userData.phoneNumber || firebaseUser.phoneNumber,
+          buildingId: userData.buildingId || null,
+          role: userData.role || 'tenant',
+
+          
           ...userData,
         };
 
         if (isMountedRef.current) {
+          console.log("User data loaded:", userObject);
           setUser(userObject);
           setIsAdmin(userData.role === 'admin');
         }
