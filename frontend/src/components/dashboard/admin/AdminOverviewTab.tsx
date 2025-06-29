@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { db } from '../../../firebase/firebase';
 import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
@@ -15,6 +16,7 @@ export default function AdminOverviewTab() {
     const [recentTenants, setRecentTenants] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOverviewData = async () => {
@@ -103,6 +105,20 @@ export default function AdminOverviewTab() {
             default: return 'bg-gray-100 text-gray-800';
         }
     };
+
+    const handleRowClick = (tenantId: string): void => {
+        try{
+            console.log('AdminOverviewTab: Tenant row clicked:', tenantId);
+        // Navigate to tenant details page or perform any action
+        // For example, you could use a router to navigate to a tenant details page
+            //navigate(`components/dashboard/tenant/AdminTenantsTab/${tenantId}`);
+            navigate(`components/dashboard/admin/AdminTenantsTab/${tenantId}   `);
+        }
+        catch (error) {
+            console.error('AdminOverviewTab: Error navigating to tenant details:', error);
+            setError('Failed to navigate to tenant details');
+        }
+    }
 
     // Show loading if user is not loaded yet or if we're fetching data
     if (!user || loading) {
@@ -242,7 +258,7 @@ export default function AdminOverviewTab() {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {recentTenants.map((tenant) => (
-                                <tr key={tenant.uid} className="hover:bg-gray-50">
+                                <tr key={tenant.uid} onClick={() => handleRowClick(tenant.uid)} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0 h-8 w-8">

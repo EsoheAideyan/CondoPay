@@ -73,6 +73,7 @@ export default function Dashboard() {
     };
 
     const renderTenantTabContent = () => {
+        console.log('Dashboard: Rendering tenant tab content for activeTab:', activeTab);
         switch (activeTab) {
             case 'overview':
                 return <TenantOverviewTab user={user as User} />;

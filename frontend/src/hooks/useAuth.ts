@@ -33,8 +33,6 @@ export const useAuth = () => {
           phoneNumber: userData.phoneNumber || firebaseUser.phoneNumber,
           buildingId: userData.buildingId || null,
           role: userData.role || 'tenant',
-
-          
           ...userData,
         };
 
