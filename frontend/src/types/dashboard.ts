@@ -4,6 +4,9 @@ export type TabType = 'overview' | 'payments' | 'maintenance' | 'documents' | 's
 // User status types
 export type UserStatus = 'active' | 'pending' | 'inactive';
 
+// Payment status types
+export type PaymentStatus = 'completed' | 'pending' | 'failed' | 'disputed';
+
 // User data interface
 export interface User {
     uid: string;
@@ -21,6 +24,22 @@ export interface User {
     status: UserStatus;
     createdAt: Date;
     updatedAt: Date;
+}
+
+// Payment data interface
+export interface Payment {
+    id: string;
+    tenantId: string;
+    tenantName: string;
+    tenantEmail: string;
+    buildingId: string;
+    unitNo: string;
+    monthlyRent: number;
+    status: PaymentStatus;
+    timestamp: Date;
+    paymentDate?: Date;
+    transactionId?: string;
+    notes?: string;
 }
 
 // Tab configuration interface
@@ -41,6 +60,26 @@ export interface DashboardStats {
     totalTenants: number;
     activePayments: number;
     pendingApprovals: number;
+}
+
+// Payment statistics interface
+export interface PaymentStats {
+    totalTenants: number;
+    totalCollected: number;
+    pendingPayments: number;
+    overduePayments: number;
+    overdueTenants: number;
+}
+
+// Overdue tenant interface
+export interface OverdueTenant {
+    uid: string;
+    name: string;
+    email: string;
+    unitNo: string;
+    overdueAmount: number;
+    daysOverdue: number;
+    lastPaymentDate?: Date;
 }
 
 // Component props interfaces

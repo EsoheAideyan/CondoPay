@@ -112,7 +112,7 @@ export default function AdminOverviewTab() {
         // Navigate to tenant details page or perform any action
         // For example, you could use a router to navigate to a tenant details page
             //navigate(`components/dashboard/tenant/AdminTenantsTab/${tenantId}`);
-            navigate(`components/dashboard/admin/AdminTenantsTab/${tenantId}   `);
+            navigate(`components/dashboard/admin/AdminTenantsTab/${tenantId}`);
         }
         catch (error) {
             console.error('AdminOverviewTab: Error navigating to tenant details:', error);

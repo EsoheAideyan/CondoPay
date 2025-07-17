@@ -76,6 +76,7 @@ export default function AdminTenantsTab() {
         fetchTenants();
     }, [user]); // Changed dependency from user?.buildingId to user
 
+
     // Handle tenant status updates
     const handleStatusUpdate = async (tenantId: string, newStatus: UserStatus) => {
         try {
