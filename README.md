@@ -1,68 +1,104 @@
-# CondoPay – Modern Rent Payment & Management App
+# CondoPay v2 (Tier 1)
 
-## Overview
-CondoPay is a web application designed to modernize rent payments and management for condo organizations. It enables tenants to view rent status, log payments, and receive digital receipts, while providing admins with tools to manage buildings, tenants, and payment records. The app is built with security, transparency, and ease-of-use in mind.
+Digital rent management platform — **React + Express + PostgreSQL + JWT**.
 
-## Features
-- **Tenant Portal**
-  - Secure login (email/password, 2FA planned)
-  - View rent history, due dates, payment status
-  - Download/email payment receipts
-- **Admin Dashboard**
-  - Add/manage buildings and tenants
-  - Track payment status by unit
-  - Send reminders or notices
-- **Payment Handling**
-  - Manual payment logging (MVP)
-  - Future: Interac e-Transfer, Plaid, or VoPay integration
-- **Audit Trail**
-  - Immutable logs for all payments and actions
-  - Timestamped, hashed confirmations
-- **Extras (Future)**
-  - Maintenance request portal
-  - Notices board
-  - Multi-language support
+The previous Firebase MVP lives in [`legacy/`](legacy/) for reference only.
 
-## Tech Stack
-- **Frontend:** React, TypeScript, TailwindCSS, Jest, Cypress
-- **Backend:** Node.js, Express, Firebase Auth, Firestore
-- **Payments:** Manual logging (MVP), future integration with Interac/Plaid/VoPay
-- **Security:** HTTPS, end-to-end encryption for sensitive data, audit trails
+## What Tier 1 includes
 
-## Getting Started
+| Layer | Tech |
+|-------|------|
+| Frontend | React 19, TypeScript, Vite, Tailwind, React Router |
+| Backend | Node, Express, TypeScript |
+| Database | PostgreSQL (Docker locally) |
+| Auth | JWT (Bearer token in `localStorage`) |
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v18+)
-- [Git](https://git-scm.com/)
-- [npm](https://www.npmjs.com/)
-- [Firebase CLI](https://firebase.google.com/docs/cli) (if using Firebase)
-- [VS Code](https://code.visualstudio.com/) (recommended)
+**Flows:** register tenant → pending status → admin approves → tenant/admin see invoices (seeded demo data).
 
-### Setup
+**Not in Tier 1 yet:** Stripe, Prisma, TanStack Query, deploy to Vercel/Render.
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/YOUR_USERNAME/condopay.git
-   cd condopay
-   ```
+## Project layout
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```text
+condopay/
+  apps/
+    web/          # React UI (port 5173)
+    api/          # REST API (port 4000)
+  legacy/         # Old Firebase app (archived)
+  docker-compose.yml
+  package.json    # npm workspaces
+```
 
-3. **Set up environment variables**
-   - Copy `.env.example` to `.env` and fill in your Firebase/Supabase credentials.
+## Quick start
 
-4. **Run the app**
-   ```bash
-   npm start
-   ```
+### 1. Prerequisites
 
-5. **Run tests**
-   ```bash
-   npm test
-   ```
+- Node.js 20+
+- Docker Desktop (for Postgres)
 
-## Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+### 2. Install
+
+```bash
+npm install
+```
+
+### 3. Environment
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+```
+
+Edit `apps/api/.env` if needed (defaults match `docker-compose.yml`).
+
+### 4. Database
+
+```bash
+npm run db:up
+npm run db:migrate
+npm run db:seed
+```
+
+### 5. Run
+
+```bash
+npm run dev
+```
+
+- Web: http://localhost:5173  
+- API: http://localhost:4000/health  
+
+### Demo logins (after seed)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@demo.condopay.com` | `Demo123!` |
+| Tenant | `tenant@demo.condopay.com` | `Demo123!` |
+
+## API endpoints (Tier 1)
+
+| Method | Path | Auth | Purpose |
+|--------|------|------|---------|
+| GET | `/health` | — | Health + DB check |
+| POST | `/api/auth/register` | — | Tenant signup + lease |
+| POST | `/api/auth/login` | — | Login → JWT |
+| GET | `/api/auth/me` | Bearer | Current user |
+| GET | `/api/tenants` | Admin | List tenants |
+| PATCH | `/api/tenants/:id/status` | Admin | Approve / deactivate |
+| GET | `/api/invoices/mine` | User | Tenant: own invoices; Admin: all |
+
+## What we removed / archived
+
+| Before | Now |
+|--------|-----|
+| `frontend/` (CRA + Firebase) | `legacy/frontend-firebase/` |
+| `backend/` (empty Express manifest) | `legacy/backend-stub/` |
+
+You can delete `legacy/` when you no longer need the old UI as reference.
+
+## Next (Tier 2+)
+
+- Stripe Checkout + webhooks  
+- Deploy: Vercel (web) + Render (API + DB)  
+- Prisma, Zod, TanStack Query  
+- AWS / Redis (optional Tier 3)
