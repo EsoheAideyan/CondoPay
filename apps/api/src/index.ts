@@ -9,6 +9,8 @@ import express from 'express';
 import cors from 'cors';
 import { pool } from './db.js';
 import authRoutes from './routes/auth.js';
+import tenantRoutes from './routes/tenants.js';
+import invoiceRoutes from './routes/invoices.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
@@ -32,6 +34,12 @@ app.get('/health', async (_req, res) => {
 
 // Auth: /api/auth/register, /api/auth/login, /api/auth/me
 app.use('/api/auth', authRoutes);
+
+// Admin: /api/tenants, /api/tenants/:id/status
+app.use('/api/tenants', tenantRoutes);
+
+// Invoices: /api/invoices/mine
+app.use('/api/invoices', invoiceRoutes);
 
 app.listen(port, () => {
   console.log(`CondoPay API listening on port ${port}`);
