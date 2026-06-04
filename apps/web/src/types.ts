@@ -23,6 +23,26 @@ export interface Invoice {
   unit_no?: string;
 }
 
+export type MaintenanceStatus = 'open' | 'in_progress' | 'resolved' | 'cancelled';
+export type MaintenancePriority = 'low' | 'normal' | 'urgent';
+
+export interface MaintenanceRequest {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  priority: MaintenancePriority;
+  status: MaintenanceStatus;
+  createdAt: string;
+  updatedAt: string;
+  buildingName: string | null;
+  unitNo: string | null;
+  tenantId: string;
+  tenantFirstName: string | null;
+  tenantLastName: string | null;
+  tenantEmail: string | null;
+}
+
 export interface TenantRow {
   id: string;
   email: string;

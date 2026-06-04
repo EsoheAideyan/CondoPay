@@ -11,6 +11,7 @@ import { AdminRoute, ProtectedRoute } from './components/ProtectedRoute';
 import AdminPage from './pages/AdminPage';
 import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
+import MaintenancePage from './pages/MaintenancePage';
 import RegisterPage from './pages/RegisterPage';
 
 export default function App() {
@@ -24,6 +25,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/maintenance"
+        element={
+          <ProtectedRoute>
+            <MaintenancePage />
           </ProtectedRoute>
         }
       />

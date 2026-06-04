@@ -55,12 +55,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const data = await apiFetch<{ user: User }>('/api/auth/me', {}, stored);
+      // A slower /me from an old token must not wipe a session set by a fresh login
+      if (localStorage.getItem(TOKEN_KEY) !== stored) return;
       setToken(stored);
       setUser(data.user);
     } catch {
-      localStorage.removeItem(TOKEN_KEY);
-      setUser(null);
-      setToken(null);
+      if (localStorage.getItem(TOKEN_KEY) === stored) {
+        localStorage.removeItem(TOKEN_KEY);
+        setUser(null);
+        setToken(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -73,15 +77,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const data = await apiFetch<{ user: User; token: string }>(
       '/api/auth/login',
-      { method: 'POST', body: JSON.stringify({ email, password }) }
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          password,
+        }),
+      }
     );
     persistSession(data.user, data.token);
   };
 
   const register = async (payload: Record<string, unknown>) => {
+    const email =
+      typeof payload.email === 'string'
+        ? payload.email.trim().toLowerCase()
+        : payload.email;
     const data = await apiFetch<{ user: User; token: string }>(
       '/api/auth/register',
-      { method: 'POST', body: JSON.stringify(payload) }
+      { method: 'POST', body: JSON.stringify({ ...payload, email }) }
     );
     persistSession(data.user, data.token);
   };

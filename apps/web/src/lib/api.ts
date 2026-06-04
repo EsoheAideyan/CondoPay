@@ -29,10 +29,18 @@ export async function apiFetch<T>(
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new ApiError(
+      `Cannot reach the API at ${API_URL}. Start it with: npm run dev:api`,
+      0
+    );
+  }
 
   const data = await res.json().catch(() => ({}));
 

@@ -11,13 +11,30 @@ import { pool } from './db.js';
 import authRoutes from './routes/auth.js';
 import tenantRoutes from './routes/tenants.js';
 import invoiceRoutes from './routes/invoices.js';
+import maintenanceRoutes from './routes/maintenance.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
-const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+// Browser may use localhost or 127.0.0.1 — both must be allowed in dev
+const corsOrigins = new Set(
+  [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    process.env.CORS_ORIGIN,
+  ].filter((o): o is string => Boolean(o))
+);
 
-// Allow the React app (different port) to call this API in the browser
-app.use(cors({ origin: corsOrigin }));
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || corsOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
+  })
+);
 
 // Parse JSON request bodies (e.g. { email, password } on login)
 app.use(express.json());
@@ -40,6 +57,9 @@ app.use('/api/tenants', tenantRoutes);
 
 // Invoices: /api/invoices/mine
 app.use('/api/invoices', invoiceRoutes);
+
+// Maintenance: /api/maintenance/mine, POST /, PATCH /:id/status
+app.use('/api/maintenance', maintenanceRoutes);
 
 app.listen(port, () => {
   console.log(`CondoPay API listening on port ${port}`);
