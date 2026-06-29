@@ -8,7 +8,7 @@
 
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { type SignOptions } from 'jsonwebtoken';
 import { pool } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import type { AuthUser, JwtPayload } from '../types.js';
@@ -38,8 +38,10 @@ function signToken(user: AuthUser): string {
     role: user.role,
   };
 
-  const expiresIn = process.env.JWT_EXPIRES_IN ?? '7d';
-  return jwt.sign(payload, secret, { expiresIn });
+  const options: SignOptions = {
+    expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as SignOptions['expiresIn'],
+  };
+  return jwt.sign(payload, secret, options);
 }
 
 // --- Register: tenant signup + building + lease in one transaction ---

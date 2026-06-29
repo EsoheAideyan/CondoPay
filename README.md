@@ -15,7 +15,9 @@ The previous Firebase MVP lives in [`legacy/`](legacy/) for reference only.
 
 **Flows:** register tenant → pending status → admin approves → tenant/admin see invoices (seeded demo data).
 
-**Not in Tier 1 yet:** Stripe, Prisma, TanStack Query, deploy to Vercel/Render.
+**Not in Tier 1 yet:** Stripe, Prisma, TanStack Query.
+
+**Deploy:** See [`DEPLOY.md`](DEPLOY.md) — Vercel (web) + Render (API + DB).
 
 ## Project layout
 
@@ -86,6 +88,13 @@ npm run dev
 | GET | `/api/tenants` | Admin | List tenants |
 | PATCH | `/api/tenants/:id/status` | Admin | Approve / deactivate |
 | GET | `/api/invoices/mine` | User | Tenant: own invoices; Admin: all |
+| GET | `/api/maintenance/mine` | User | Maintenance requests |
+| POST | `/api/maintenance` | Active tenant | Submit maintenance request |
+| PATCH | `/api/maintenance/:id/status` | Admin | Update maintenance status |
+
+## Deploy to production
+
+See **[DEPLOY.md](DEPLOY.md)** for step-by-step Vercel + Render setup.
 
 ## What we removed / archived
 
@@ -99,6 +108,5 @@ You can delete `legacy/` when you no longer need the old UI as reference.
 ## Next (Tier 2+)
 
 - Stripe Checkout + webhooks  
-- Deploy: Vercel (web) + Render (API + DB)  
 - Prisma, Zod, TanStack Query  
 - AWS / Redis (optional Tier 3)

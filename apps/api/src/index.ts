@@ -15,13 +15,17 @@ import maintenanceRoutes from './routes/maintenance.js';
 
 const app = express();
 const port = Number(process.env.PORT) || 4000;
-// Browser may use localhost or 127.0.0.1 — both must be allowed in dev
+
+// Comma-separated in production, e.g. https://condopay.vercel.app,https://condopay-*.vercel.app
 const corsOrigins = new Set(
   [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     process.env.CORS_ORIGIN,
-  ].filter((o): o is string => Boolean(o))
+    ...(process.env.CORS_ORIGINS?.split(',') ?? []),
+  ]
+    .flatMap((o) => (o ? [o.trim()] : []))
+    .filter(Boolean)
 );
 
 app.use(
