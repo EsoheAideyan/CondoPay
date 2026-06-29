@@ -116,9 +116,10 @@ If login fails with a network error:
 - **New Web Service** → connect repo
 - **Root Directory:** leave empty (repo root)
 - **Build:** `npm install && npm run build -w @condopay/api`
-- **Start:** `npm run start -w @condopay/api`
-- **Pre-deploy:** `npm run db:migrate -w @condopay/api`
+- **Start:** `npm run db:migrate -w @condopay/api && npm run start -w @condopay/api`
 - Env: `DATABASE_URL`, `JWT_SECRET`, `CORS_ORIGIN`, `NODE_ENV=production`
+
+> **Free tier note:** Render does not allow `preDeployCommand` on free web services. Migrations run at **startup** instead (safe — already-applied migrations are skipped).
 
 ### Render Postgres
 
