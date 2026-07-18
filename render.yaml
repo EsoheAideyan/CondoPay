@@ -14,7 +14,8 @@ services:
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm install && npm run build -w @condopay/api
+    # --include=dev: Render skips TypeScript/@types in production installs; we need them to run tsc
+    buildCommand: npm install --include=dev && npm run build -w @condopay/api
     # Free tier: no preDeployCommand — run migrations when the server starts instead
     startCommand: npm run db:migrate -w @condopay/api && npm run start -w @condopay/api
     healthCheckPath: /health
