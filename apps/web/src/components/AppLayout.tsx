@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { formatUserSubtitle } from '../lib/formatUser';
 import { ThemeToggle } from './ThemeToggle';
+import { ZoomControls } from './ZoomControls';
 
 interface AppLayoutProps {
   title: string;
@@ -83,6 +84,7 @@ export function AppLayout({
                 Admin panel
               </Link>
             )}
+            <ZoomControls />
             <ThemeToggle />
             <button
               type="button"

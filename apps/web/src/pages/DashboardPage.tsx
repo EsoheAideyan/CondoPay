@@ -16,7 +16,7 @@ export default function DashboardPage() {
     apiFetch<{ invoices: Invoice[] }>('/api/invoices/mine', {}, token)
       .then((data) => setInvoices(data.invoices))
       .catch(() => setError('Could not load invoices'));
-  }, [token]);
+  }, [token, user?.status]);
 
   return (
     <AppLayout title="Dashboard" showUserMeta showAppNav showAdminLink>

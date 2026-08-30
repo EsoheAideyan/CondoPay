@@ -74,6 +74,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     refreshUser();
   }, [refreshUser]);
 
+  // Pick up approval/deactivation changes when the user returns to this browser.
+  useEffect(() => {
+    const handleFocus = () => {
+      void refreshUser();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [refreshUser]);
+
   const login = async (email: string, password: string) => {
     const data = await apiFetch<{ user: User; token: string }>(
       '/api/auth/login',

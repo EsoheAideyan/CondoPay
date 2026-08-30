@@ -51,30 +51,98 @@ router.patch('/:id/status', async (req, res) => {
     return;
   }
 
-  const { rows } = await pool.query(
-    `
-    UPDATE users
-    SET status = $1, updated_at = NOW()
-    WHERE id = $2 AND role = 'tenant'
-    RETURNING id, email, status, first_name, last_name
-    `,
-    [status, req.params.id]
-  );
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
 
-  if (rows.length === 0) {
-    res.status(404).json({ error: 'Tenant not found' });
-    return;
+    // Lock the tenant so concurrent approval requests cannot create duplicates.
+    const currentResult = await client.query(
+      `
+      SELECT u.id, u.email, u.status, u.first_name, u.last_name,
+             l.id AS lease_id
+      FROM users u
+      LEFT JOIN leases l ON l.tenant_id = u.id
+      WHERE u.id = $1 AND u.role = 'tenant'
+      FOR UPDATE OF u
+      `,
+      [req.params.id]
+    );
+
+    if (currentResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      res.status(404).json({ error: 'Tenant not found' });
+      return;
+    }
+
+    const currentTenant = currentResult.rows[0];
+    if (status === 'active' && !currentTenant.lease_id) {
+      await client.query('ROLLBACK');
+      res.status(409).json({ error: 'Tenant needs a lease before approval' });
+      return;
+    }
+
+    const { rows } = await client.query(
+      `
+      UPDATE users
+      SET status = $1, updated_at = NOW()
+      WHERE id = $2
+      RETURNING id, email, status, first_name, last_name
+      `,
+      [status, req.params.id]
+    );
+
+    let invoiceCreated = false;
+    if (status === 'active' && currentTenant.status !== 'active') {
+      const invoiceResult = await client.query(
+        `
+        WITH invoice_details AS (
+          SELECT l.id AS lease_id,
+                 l.monthly_rent AS amount,
+                 CASE
+                   WHEN l.lease_start > CURRENT_DATE THEN l.lease_start
+                   ELSE (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month')::date
+                 END AS due_date
+          FROM leases l
+          WHERE l.tenant_id = $1
+        )
+        INSERT INTO invoices (lease_id, amount, due_date, status, period_label)
+        SELECT d.lease_id,
+               d.amount,
+               d.due_date,
+               'open',
+               to_char(d.due_date, 'FMMonth YYYY')
+        FROM invoice_details d
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM invoices i
+          WHERE i.lease_id = d.lease_id
+            AND i.due_date = d.due_date
+        )
+        RETURNING id
+        `,
+        [req.params.id]
+      );
+      invoiceCreated = invoiceResult.rows.length > 0;
+    }
+
+    await client.query('COMMIT');
+    res.json({
+      tenant: {
+        id: rows[0].id,
+        email: rows[0].email,
+        status: rows[0].status,
+        firstName: rows[0].first_name,
+        lastName: rows[0].last_name,
+      },
+      invoiceCreated,
+    });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
+    res.status(500).json({ error: 'Could not update tenant status' });
+  } finally {
+    client.release();
   }
-
-  res.json({
-    tenant: {
-      id: rows[0].id,
-      email: rows[0].email,
-      status: rows[0].status,
-      firstName: rows[0].first_name,
-      lastName: rows[0].last_name,
-    },
-  });
 });
 
 export default router;

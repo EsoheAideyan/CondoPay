@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { inputClassName, labelClassName } from '../components/AppLayout';
 import { PasswordField } from '../components/PasswordField';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { ZoomControls } from '../components/ZoomControls';
 import { useAuth } from '../context/AuthContext';
 import { ApiError } from '../lib/api';
 
@@ -32,7 +33,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="flex justify-end p-4">
+      <div className="flex justify-end gap-2 p-4">
+        <ZoomControls />
         <ThemeToggle />
       </div>
       <div className="flex flex-1 items-center justify-center px-4 pb-12">
@@ -46,8 +48,8 @@ export default function LoginPage() {
 
           <p className="mt-3 rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-600 dark:bg-slate-700 dark:text-slate-300">
             Demo: <strong>admin@demo.condopay.com</strong> or{' '}
-            <strong>tenant@demo.condopay.com</strong> — password{' '}
-            <strong>Demo123!</strong>
+            <strong>tenant@demo.condopay.com</strong> <br />
+            <strong>Password: Demo123!</strong>
           </p>
 
           {error && (

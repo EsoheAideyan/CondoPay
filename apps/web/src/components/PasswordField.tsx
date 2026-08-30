@@ -9,6 +9,8 @@ interface PasswordFieldProps {
   autoComplete?: string;
   required?: boolean;
   minLength?: number;
+  disabled?: boolean;
+  describedBy?: string;
 }
 
 export function PasswordField({
@@ -19,6 +21,8 @@ export function PasswordField({
   autoComplete,
   required = true,
   minLength,
+  disabled = false,
+  describedBy,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
 
@@ -34,16 +38,19 @@ export function PasswordField({
           autoComplete={autoComplete}
           required={required}
           minLength={minLength}
-          className={`${inputClassName.replace('mt-1 ', '')} pr-10`}
+          disabled={disabled}
+          aria-describedby={describedBy}
+          className={`${inputClassName.replace('mt-1 ', '')} pr-10 disabled:cursor-not-allowed disabled:opacity-50`}
           value={value}
           onChange={(e) => onChange(e.target.value)}
         />
         <button
           type="button"
+          disabled={disabled}
           onClick={() => setVisible((v) => !v)}
           aria-pressed={visible}
           aria-label={visible ? 'Hide password' : 'Show password'}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-slate-400 dark:hover:bg-slate-700"
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-400 dark:hover:bg-slate-700"
         >
           {visible ? 'Hide' : 'Show'}
         </button>

@@ -74,8 +74,23 @@ router.post('/register', async (req, res) => {
     return;
   }
 
+  // Keep in sync with apps/web password checklist
   if (password.length < 8) {
     res.status(400).json({ error: 'Password must be at least 8 characters' });
+    return;
+  }
+  if (!/[a-zA-Z]/.test(password)) {
+    res.status(400).json({ error: 'Password must include at least one letter' });
+    return;
+  }
+  if (!/\d/.test(password)) {
+    res.status(400).json({ error: 'Password must include at least one number' });
+    return;
+  }
+  if (!/[^a-zA-Z0-9]/.test(password)) {
+    res.status(400).json({
+      error: 'Password must include at least one special character (e.g. !@#$)',
+    });
     return;
   }
 

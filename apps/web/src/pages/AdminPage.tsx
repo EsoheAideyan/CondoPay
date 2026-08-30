@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AppLayout, inputClassName } from '../components/AppLayout';
 import { useAuth } from '../context/AuthContext';
-import { apiFetch } from '../lib/api';
+import { ApiError, apiFetch } from '../lib/api';
 import { filterTenants } from '../lib/searchTenants';
 import type { TenantRow } from '../types';
 
@@ -33,12 +33,23 @@ export default function AdminPage() {
   const setStatus = async (id: string, status: string) => {
     if (!token) return;
     setApprovingId(id);
+    setError('');
     try {
-      await apiFetch(`/api/tenants/${id}/status`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status }),
-      }, token);
+      await apiFetch(
+        `/api/tenants/${id}/status`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify({ status }),
+        },
+        token
+      );
       loadTenants();
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : `Could not ${status === 'active' ? 'approve' : 'deactivate'} tenant`
+      );
     } finally {
       setApprovingId(null);
     }

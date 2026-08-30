@@ -13,9 +13,13 @@ The previous Firebase MVP lives in [`legacy/`](legacy/) for reference only.
 | Database | PostgreSQL (Docker locally) |
 | Auth | JWT (Bearer token in `localStorage`) |
 
-**Flows:** register tenant → pending status → admin approves → tenant/admin see invoices (seeded demo data).
+**Core flows:** register tenant → pending status → admin approves → first rent invoice is created → tenant/admin view invoices. Active tenants can also submit maintenance requests, and admins can track them through resolution.
 
-**Not in Tier 1 yet:** Stripe, Prisma, TanStack Query.
+**UX:** light/dark mode, persistent zoom controls with inline guidance, accessible form feedback, password visibility and strength checks, sortable/paginated invoices, and tenant search.
+
+**Deployment:** Vercel frontend + Render API/PostgreSQL.
+
+**Not in Tier 1 yet:** real payment processing, email notifications, Prisma, Zod, or TanStack Query.
 
 **Deploy:** See [`DEPLOY.md`](DEPLOY.md) — Vercel (web) + Render (API + DB).
 
@@ -63,12 +67,15 @@ npm run db:seed
 
 ### 5. Run
 
+Start each app in a separate terminal:
+
 ```bash
-npm run dev
+npm run dev:api
+npm run dev:web
 ```
 
-- Web: http://localhost:5173  
-- API: http://localhost:4000/health  
+- Web: http://localhost:5173
+- API health check: http://localhost:4000/health
 
 ### Demo logins (after seed)
 
@@ -82,11 +89,11 @@ npm run dev
 | Method | Path | Auth | Purpose |
 |--------|------|------|---------|
 | GET | `/health` | — | Health + DB check |
-| POST | `/api/auth/register` | — | Tenant signup + lease |
+| POST | `/api/auth/register` | — | Tenant signup + lease (strong password required) |
 | POST | `/api/auth/login` | — | Login → JWT |
 | GET | `/api/auth/me` | Bearer | Current user |
 | GET | `/api/tenants` | Admin | List tenants |
-| PATCH | `/api/tenants/:id/status` | Admin | Approve / deactivate |
+| PATCH | `/api/tenants/:id/status` | Admin | Approve / deactivate; approval creates first invoice |
 | GET | `/api/invoices/mine` | User | Tenant: own invoices; Admin: all |
 | GET | `/api/maintenance/mine` | User | Maintenance requests |
 | POST | `/api/maintenance` | Active tenant | Submit maintenance request |
@@ -107,6 +114,9 @@ You can delete `legacy/` when you no longer need the old UI as reference.
 
 ## Next (Tier 2+)
 
-- Stripe Checkout + webhooks  
-- Prisma, Zod, TanStack Query  
-- AWS / Redis (optional Tier 3)
+- Stripe Checkout + webhook-driven payment status
+- Email notifications for approvals, invoices, and maintenance updates
+- API input validation and automated end-to-end tests
+- httpOnly cookie sessions and auth rate limiting
+- Prisma and TanStack Query (optional refactors)
+- AWS / Redis (only when scale requires them)

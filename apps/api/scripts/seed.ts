@@ -78,19 +78,18 @@ async function main() {
 
   await client.query('BEGIN');
   try {
-    // Delete order matters: invoices → leases → users → buildings
-    // Also clear leases on demo buildings (e.g. from manual registrations using same names)
+    // Delete only records owned by demo users so manual registrations stay intact.
     await client.query(
       `
       DELETE FROM invoices
       WHERE lease_id IN (
-        SELECT l.id FROM leases l
-        LEFT JOIN users u ON u.id = l.tenant_id
-        LEFT JOIN buildings b ON b.id = l.building_id
-        WHERE u.email LIKE $1 OR b.name = ANY($2)
+        SELECT l.id
+        FROM leases l
+        JOIN users u ON u.id = l.tenant_id
+        WHERE u.email LIKE $1
       )
       `,
-      [`%${DEMO_DOMAIN}`, BUILDINGS]
+      [`%${DEMO_DOMAIN}`]
     );
     await client.query(
       `DELETE FROM maintenance_requests
@@ -98,15 +97,17 @@ async function main() {
       [`%${DEMO_DOMAIN}`]
     );
     await client.query(
-      `
-      DELETE FROM leases
-      WHERE tenant_id IN (SELECT id FROM users WHERE email LIKE $1)
-         OR building_id IN (SELECT id FROM buildings WHERE name = ANY($2))
-      `,
-      [`%${DEMO_DOMAIN}`, BUILDINGS]
+      `DELETE FROM leases
+       WHERE tenant_id IN (SELECT id FROM users WHERE email LIKE $1)`,
+      [`%${DEMO_DOMAIN}`]
     );
     await client.query(`DELETE FROM users WHERE email LIKE $1`, [`%${DEMO_DOMAIN}`]);
-    await client.query(`DELETE FROM buildings WHERE name = ANY($1)`, [BUILDINGS]);
+    await client.query(
+      `DELETE FROM buildings b
+       WHERE b.name = ANY($1)
+         AND NOT EXISTS (SELECT 1 FROM leases l WHERE l.building_id = b.id)`,
+      [BUILDINGS]
+    );
 
     const buildingIds: string[] = [];
     for (const name of BUILDINGS) {
@@ -128,7 +129,6 @@ async function main() {
       );
     }
 
-    const months = ['March', 'April', 'May', 'June'];
     for (let i = 0; i < TENANT_NAMES.length; i++) {
       const [first, last] = TENANT_NAMES[i];
       const email =
@@ -156,15 +156,18 @@ async function main() {
         await client.query(
           `INSERT INTO invoices (lease_id, amount, due_date, status, period_label)
            VALUES
-             ($1, $2, '2026-06-01', 'open', 'June 2026'),
-             ($1, $2, '2026-05-01', 'paid', 'May 2026'),
-             ($1, $2, '2026-04-01', 'paid', 'April 2026')`,
-          [leaseResult.rows[0].id, rent]
-        );
-      } else if (status === 'pending') {
-        await client.query(
-          `INSERT INTO invoices (lease_id, amount, due_date, status, period_label)
-           VALUES ($1, $2, '2026-06-01', 'open', 'June 2026')`,
+             ($1, $2,
+              (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month')::date,
+              'open',
+              to_char(date_trunc('month', CURRENT_DATE) + INTERVAL '1 month', 'FMMonth YYYY')),
+             ($1, $2,
+              date_trunc('month', CURRENT_DATE)::date,
+              'paid',
+              to_char(date_trunc('month', CURRENT_DATE), 'FMMonth YYYY')),
+             ($1, $2,
+              (date_trunc('month', CURRENT_DATE) - INTERVAL '1 month')::date,
+              'paid',
+              to_char(date_trunc('month', CURRENT_DATE) - INTERVAL '1 month', 'FMMonth YYYY'))`,
           [leaseResult.rows[0].id, rent]
         );
       }
