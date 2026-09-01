@@ -5,11 +5,15 @@
 
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { SereneBackground } from './SereneBackground';
 
 function LoadingScreen() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p className="text-slate-600">Loading…</p>
+    <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-[#f8f7fb] dark:bg-[#101827]">
+      <SereneBackground />
+      <p className="relative z-10 rounded-full border border-[#e7e4e8] bg-white/85 px-5 py-2.5 font-medium text-[#2c5282] shadow-sm backdrop-blur-md dark:border-slate-700 dark:bg-slate-800/85 dark:text-[#a9c8ed]">
+        Loading…
+      </p>
     </div>
   );
 }

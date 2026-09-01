@@ -23,7 +23,7 @@ export default function DashboardPage() {
       {user?.status === 'pending' && (
         <div
           role="alert"
-          className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200"
+          className="mb-6 rounded-2xl border border-amber-300 bg-amber-50/90 px-4 py-3 text-amber-900 shadow-sm backdrop-blur-md dark:border-amber-700 dark:bg-amber-950/90 dark:text-amber-200"
         >
           Your account is pending admin approval.
         </div>
@@ -32,11 +32,11 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <section
           aria-labelledby="balance-heading"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow dark:border-slate-700 dark:bg-slate-800"
+          className="rounded-2xl border border-[#e7e4e8] bg-white/90 p-6 shadow-[0_20px_55px_-32px_rgba(38,52,73,0.38)] backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/90"
         >
           <h2
             id="balance-heading"
-            className="text-lg font-semibold text-slate-900 dark:text-white"
+            className="text-lg font-semibold text-[#263449] dark:text-white"
           >
             Balance due by building
           </h2>
@@ -48,11 +48,11 @@ export default function DashboardPage() {
 
         <section
           aria-labelledby="invoices-heading"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow dark:border-slate-700 dark:bg-slate-800"
+          className="rounded-2xl border border-[#e7e4e8] bg-white/90 p-6 shadow-[0_20px_55px_-32px_rgba(38,52,73,0.38)] backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/90"
         >
           <h2
             id="invoices-heading"
-            className="text-lg font-semibold text-slate-900 dark:text-white"
+            className="text-lg font-semibold text-[#263449] dark:text-white"
           >
             Rent invoices
           </h2>

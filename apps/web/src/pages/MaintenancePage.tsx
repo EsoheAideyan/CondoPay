@@ -35,6 +35,9 @@ const STATUS_LABELS: Record<MaintenanceStatus, string> = {
   cancelled: 'Cancelled',
 };
 
+const SERENE_INPUT_CLASS_NAME = `${inputClassName} !rounded-2xl !border-[#d9dce7] !bg-[#f7f6fa]/90 !px-4 !text-[#24364b] focus-visible:!outline-[#2c5282] dark:!border-slate-600 dark:!bg-slate-900/70 dark:!text-white dark:focus-visible:!outline-[#a9c8ed]`;
+const SERENE_LABEL_CLASS_NAME = `${labelClassName} ml-1 !text-[#34445a] dark:!text-slate-200`;
+
 function formatWhen(iso: string) {
   return new Date(iso).toLocaleString(undefined, {
     dateStyle: 'medium',
@@ -122,11 +125,11 @@ export default function MaintenancePage() {
         {canSubmit && (
           <section
             aria-labelledby="maintenance-form-heading"
-            className="rounded-xl border border-slate-200 bg-white p-6 shadow dark:border-slate-700 dark:bg-slate-800"
+            className="rounded-2xl border border-[#e7e4e8] bg-white/90 p-6 shadow-[0_20px_55px_-32px_rgba(38,52,73,0.38)] backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/90"
           >
             <h2
               id="maintenance-form-heading"
-              className="text-lg font-semibold text-slate-900 dark:text-white"
+              className="text-lg font-semibold text-[#263449] dark:text-white"
             >
               Submit a request
             </h2>
@@ -137,34 +140,37 @@ export default function MaintenancePage() {
             {success && (
               <p
                 role="status"
-                className="mt-4 rounded-lg bg-green-50 px-3 py-2 text-sm text-green-800 dark:bg-green-950 dark:text-green-200"
+                className="mt-4 rounded-2xl border border-green-200 bg-green-50/90 px-4 py-3 text-sm text-green-800 dark:border-green-900 dark:bg-green-950/90 dark:text-green-200"
               >
                 {success}
               </p>
             )}
             {formError && (
-              <p role="alert" className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+              <p
+                role="alert"
+                className="mt-4 rounded-2xl border border-red-200 bg-red-50/90 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/90 dark:text-red-300"
+              >
                 {formError}
               </p>
             )}
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate>
               <div>
-                <label htmlFor="maint-title" className={labelClassName}>
+                <label htmlFor="maint-title" className={SERENE_LABEL_CLASS_NAME}>
                   Title
                 </label>
                 <input
                   id="maint-title"
                   required
                   minLength={3}
-                  className={inputClassName}
+                  className={SERENE_INPUT_CLASS_NAME}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Leaky bathroom sink"
                 />
               </div>
               <div>
-                <label htmlFor="maint-desc" className={labelClassName}>
+                <label htmlFor="maint-desc" className={SERENE_LABEL_CLASS_NAME}>
                   Description
                 </label>
                 <textarea
@@ -172,7 +178,7 @@ export default function MaintenancePage() {
                   required
                   minLength={10}
                   rows={4}
-                  className={inputClassName}
+                  className={SERENE_INPUT_CLASS_NAME}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="What happened, when did it start, and any safety concerns?"
@@ -180,12 +186,12 @@ export default function MaintenancePage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="maint-category" className={labelClassName}>
+                  <label htmlFor="maint-category" className={SERENE_LABEL_CLASS_NAME}>
                     Category
                   </label>
                   <select
                     id="maint-category"
-                    className={inputClassName}
+                    className={SERENE_INPUT_CLASS_NAME}
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
@@ -197,12 +203,12 @@ export default function MaintenancePage() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="maint-priority" className={labelClassName}>
+                  <label htmlFor="maint-priority" className={SERENE_LABEL_CLASS_NAME}>
                     Priority
                   </label>
                   <select
                     id="maint-priority"
-                    className={inputClassName}
+                    className={SERENE_INPUT_CLASS_NAME}
                     value={priority}
                     onChange={(e) => setPriority(e.target.value)}
                   >
@@ -217,7 +223,7 @@ export default function MaintenancePage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50"
+                className="rounded-full bg-[#a44c2d] px-5 py-2.5 font-semibold text-white shadow-lg shadow-[#a44c2d]/20 transition hover:bg-[#8e3f24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8e3f24] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
               >
                 {submitting ? 'Submitting…' : 'Submit request'}
               </button>
@@ -228,7 +234,7 @@ export default function MaintenancePage() {
         {user?.role === 'tenant' && user.status === 'pending' && (
           <div
             role="alert"
-            className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200"
+            className="rounded-2xl border border-amber-300 bg-amber-50/90 px-4 py-3 text-amber-900 shadow-sm backdrop-blur-md dark:border-amber-700 dark:bg-amber-950/90 dark:text-amber-200"
           >
             Your account is pending approval. You can submit maintenance requests once
             an admin activates your account.
@@ -237,11 +243,11 @@ export default function MaintenancePage() {
 
         <section
           aria-labelledby="maintenance-list-heading"
-          className="rounded-xl border border-slate-200 bg-white p-6 shadow dark:border-slate-700 dark:bg-slate-800"
+          className="rounded-2xl border border-[#e7e4e8] bg-white/90 p-6 shadow-[0_20px_55px_-32px_rgba(38,52,73,0.38)] backdrop-blur-md dark:border-slate-700/80 dark:bg-slate-800/90"
         >
           <h2
             id="maintenance-list-heading"
-            className="text-lg font-semibold text-slate-900 dark:text-white"
+            className="text-lg font-semibold text-[#263449] dark:text-white"
           >
             {isAdmin ? 'All maintenance requests' : 'Your requests'}
           </h2>
@@ -256,12 +262,12 @@ export default function MaintenancePage() {
             </p>
           )}
           {!loadError && requests.length > 0 && (
-            <div className="mt-4 overflow-x-auto">
+            <div className="mt-4 overflow-x-auto rounded-2xl border border-[#e7e4e8] dark:border-slate-700">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <caption className="sr-only">
                   Maintenance requests with status and property details
                 </caption>
-                <thead className="bg-slate-50 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+                <thead className="bg-[#f5f3f6]/90 text-[#48698d] dark:bg-slate-700/80 dark:text-slate-300">
                   <tr>
                     <th scope="col" className="px-4 py-3">
                       Submitted
@@ -294,7 +300,7 @@ export default function MaintenancePage() {
                   {requests.map((r) => (
                     <tr
                       key={r.id}
-                      className="border-t border-slate-200 dark:border-slate-700"
+                      className="border-t border-[#e7e4e8] dark:border-slate-700"
                     >
                       <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
                         {formatWhen(r.createdAt)}
@@ -343,7 +349,7 @@ export default function MaintenancePage() {
                             onChange={(e) =>
                               updateStatus(r.id, e.target.value as MaintenanceStatus)
                             }
-                            className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+                            className="rounded-xl border border-[#d9dce7] bg-[#f7f6fa]/90 px-2 py-1 text-sm text-[#24364b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#2c5282] dark:border-slate-600 dark:bg-slate-900/70 dark:text-slate-100 dark:focus-visible:outline-[#a9c8ed]"
                           >
                             {(Object.keys(STATUS_LABELS) as MaintenanceStatus[]).map(
                               (s) => (

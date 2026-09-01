@@ -32,47 +32,40 @@ export function ZoomControls() {
   };
 
   return (
-    <details className="relative">
-      <summary className="cursor-pointer list-none rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700">
+    <div
+      role="group"
+      aria-label="Display zoom controls"
+      className="inline-flex items-center overflow-hidden rounded-full border border-[#d9dce7] bg-white/80 text-[#2c5282] shadow-sm backdrop-blur-sm dark:border-slate-600 dark:bg-slate-800/80 dark:text-[#a9c8ed]"
+    >
+      <button
+        type="button"
+        onClick={zoomOut}
+        disabled={currentIndex === 0}
+        aria-label="Zoom out"
+        title="Zoom out"
+        className="px-2.5 py-1.5 font-bold hover:bg-[#f0eff4] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2c5282] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-slate-700 dark:focus-visible:outline-[#a9c8ed]"
+      >
+        −
+      </button>
+      <button
+        type="button"
+        onClick={() => setZoom(100)}
+        aria-label={`Reset zoom to 100 percent. Current zoom ${zoom} percent`}
+        title="Reset zoom to 100%"
+        className="border-x border-[#d9dce7] px-2.5 py-1.5 text-sm font-medium hover:bg-[#f0eff4] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2c5282] dark:border-slate-600 dark:hover:bg-slate-700 dark:focus-visible:outline-[#a9c8ed]"
+      >
         Zoom {zoom}%
-      </summary>
-      <div className="absolute right-0 z-20 mt-2 w-64 rounded-lg border border-slate-200 bg-white p-3 shadow-lg dark:border-slate-600 dark:bg-slate-800">
-        <p className="text-sm font-medium text-slate-900 dark:text-white">
-          Display size
-        </p>
-        <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">
-          Increase or decrease text and interface size. Your choice is saved on
-          this device.
-        </p>
-        <div className="mt-3 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={zoomOut}
-            disabled={currentIndex === 0}
-            aria-label="Zoom out"
-            className="rounded-lg border border-slate-300 px-3 py-1.5 font-bold hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:hover:bg-slate-700"
-          >
-            A−
-          </button>
-          <button
-            type="button"
-            onClick={() => setZoom(100)}
-            disabled={zoom === 100}
-            className="rounded-lg px-2 py-1.5 text-xs font-medium text-blue-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:text-slate-400 disabled:no-underline dark:text-blue-400"
-          >
-            Reset
-          </button>
-          <button
-            type="button"
-            onClick={zoomIn}
-            disabled={currentIndex === ZOOM_LEVELS.length - 1}
-            aria-label="Zoom in"
-            className="rounded-lg border border-slate-300 px-3 py-1.5 font-bold hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:hover:bg-slate-700"
-          >
-            A+
-          </button>
-        </div>
-      </div>
-    </details>
+      </button>
+      <button
+        type="button"
+        onClick={zoomIn}
+        disabled={currentIndex === ZOOM_LEVELS.length - 1}
+        aria-label="Zoom in"
+        title="Zoom in"
+        className="px-2.5 py-1.5 font-bold hover:bg-[#f0eff4] focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2c5282] disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-slate-700 dark:focus-visible:outline-[#a9c8ed]"
+      >
+        +
+      </button>
+    </div>
   );
 }

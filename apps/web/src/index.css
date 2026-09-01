@@ -4,6 +4,35 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-100;
+    @apply bg-[#f8f7fb] text-[#24364b] antialiased dark:bg-[#101827] dark:text-slate-100;
   }
+}
+
+.modern-date-input {
+  color-scheme: light;
+  font-variant-numeric: tabular-nums;
+}
+
+.modern-date-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 9999px;
+  padding: 0.4rem;
+  background-color: rgb(44 82 130 / 8%);
+  transition: background-color 150ms ease;
+}
+
+.modern-date-input::-webkit-calendar-picker-indicator:hover {
+  background-color: rgb(44 82 130 / 16%);
+}
+
+.dark .modern-date-input {
+  color-scheme: dark;
+}
+
+.dark .modern-date-input::-webkit-calendar-picker-indicator {
+  background-color: rgb(169 200 237 / 12%);
+}
+
+.dark .modern-date-input::-webkit-calendar-picker-indicator:hover {
+  background-color: rgb(169 200 237 / 22%);
 }

@@ -48,7 +48,7 @@ export function BalanceByBuilding({ invoices }: BalanceByBuildingProps) {
 
   if (byBuilding.length === 0) {
     return (
-      <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+      <p className="mt-4 text-sm text-[#48698d] dark:text-slate-400">
         No balance due — you&apos;re caught up on rent.
       </p>
     );
@@ -56,23 +56,23 @@ export function BalanceByBuilding({ invoices }: BalanceByBuildingProps) {
 
   return (
     <div className="mt-4 space-y-4">
-      <ul className="divide-y divide-slate-200 rounded-lg border border-slate-200 dark:divide-slate-700 dark:border-slate-600">
+      <ul className="divide-y divide-[#e7e4e8] overflow-hidden rounded-2xl border border-[#d9dce7] bg-[#f8f7fb]/70 shadow-sm dark:divide-slate-700 dark:border-slate-600 dark:bg-slate-900/30">
         {byBuilding.map((row) => (
           <li
             key={row.buildingName}
             className="flex flex-wrap items-baseline justify-between gap-2 px-4 py-3"
           >
             <div>
-              <p className="font-medium text-slate-900 dark:text-white">
+              <p className="font-medium text-[#263449] dark:text-white">
                 {row.buildingName}
               </p>
               {row.units.length > 0 && (
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-[#60758e] dark:text-slate-400">
                   Unit{row.units.length > 1 ? 's' : ''}: {row.units.sort().join(', ')}
                 </p>
               )}
               {(row.overdueCount > 0 || row.openCount > 0) && (
-                <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-0.5 text-xs text-[#60758e] dark:text-slate-400">
                   {row.overdueCount > 0 && (
                     <span className="text-red-600 dark:text-red-400">
                       {row.overdueCount} overdue
@@ -83,7 +83,7 @@ export function BalanceByBuilding({ invoices }: BalanceByBuildingProps) {
                 </p>
               )}
             </div>
-            <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+            <p className="text-lg font-semibold text-[#2c5282] dark:text-[#a9c8ed]">
               ${row.amount.toFixed(2)}
             </p>
           </li>
@@ -91,17 +91,17 @@ export function BalanceByBuilding({ invoices }: BalanceByBuildingProps) {
       </ul>
 
       {byBuilding.length > 1 && (
-        <div className="flex items-baseline justify-between border-t border-slate-200 pt-3 dark:border-slate-600">
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        <div className="flex items-baseline justify-between border-t border-[#d9dce7] pt-3 dark:border-slate-600">
+          <p className="text-sm font-medium text-[#34445a] dark:text-slate-300">
             Total due
           </p>
-          <p className="text-xl font-bold text-slate-900 dark:text-white">
+          <p className="text-xl font-bold text-[#2c5282] dark:text-[#a9c8ed]">
             ${total.toFixed(2)}
           </p>
         </div>
       )}
 
-      <p className="text-xs text-slate-500 dark:text-slate-400">
+      <p className="text-xs text-[#60758e] dark:text-slate-400">
         Based on open and overdue invoices. Stripe payments — Tier 2.
       </p>
     </div>

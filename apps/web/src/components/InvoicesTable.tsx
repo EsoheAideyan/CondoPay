@@ -65,10 +65,10 @@ function SortableHeader({
       <button
         type="button"
         onClick={() => onSort(sortKey)}
-        className="inline-flex items-center gap-1 font-medium hover:text-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-white"
+        className="inline-flex items-center gap-1 rounded-sm font-medium hover:text-[#263449] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2c5282] dark:hover:text-white dark:focus-visible:outline-[#a9c8ed]"
       >
         {label}
-        <span className="text-xs text-slate-400 dark:text-slate-500" aria-hidden>
+        <span className="text-xs text-[#7a8ba0] dark:text-slate-400" aria-hidden>
           {active ? (direction === 'asc' ? '↑' : '↓') : '↕'}
         </span>
       </button>
@@ -127,17 +127,17 @@ export function InvoicesTable({
   const rangeEnd = Math.min(page * PAGE_SIZE, total);
 
   if (invoices.length === 0) {
-    return <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">{emptyMessage}</p>;
+    return <p className="mt-4 text-sm text-[#60758e] dark:text-slate-400">{emptyMessage}</p>;
   }
 
   return (
     <div className="mt-4">
-      <div className="overflow-x-auto">
-      <table className="w-full min-w-[560px] text-left text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-[#d9dce7] bg-white/50 shadow-sm dark:border-slate-600 dark:bg-slate-900/30">
+        <table className="w-full min-w-[560px] text-left text-sm">
         <caption className="sr-only">
           Rent invoices; click column headers to sort
         </caption>
-        <thead className="bg-slate-50 text-slate-600 dark:bg-slate-700 dark:text-slate-300">
+        <thead className="bg-[#f0eff4]/90 text-[#48698d] dark:bg-slate-700/80 dark:text-slate-300">
           <tr>
             <SortableHeader
               label="Date"
@@ -180,21 +180,21 @@ export function InvoicesTable({
           {paged.map((inv) => (
             <tr
               key={inv.id}
-              className="border-t border-slate-200 dark:border-slate-700"
+              className="border-t border-[#e7e4e8] bg-[#f8f7fb]/35 transition-colors hover:bg-[#f5f3f6]/75 dark:border-slate-700 dark:bg-transparent dark:hover:bg-slate-800/70"
             >
-              <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+              <td className="px-4 py-3 text-[#34445a] dark:text-slate-300">
                 <span className="block">{formatDate(inv.due_date)}</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-xs text-[#60758e] dark:text-slate-400">
                   {inv.period_label}
                 </span>
               </td>
-              <td className="px-4 py-3 text-slate-900 dark:text-slate-100">
+              <td className="px-4 py-3 text-[#263449] dark:text-slate-100">
                 {inv.unit_no ?? '—'}
               </td>
-              <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
+              <td className="px-4 py-3 text-[#34445a] dark:text-slate-300">
                 {inv.building_name ?? '—'}
               </td>
-              <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">
+              <td className="px-4 py-3 font-semibold text-[#2c5282] dark:text-[#a9c8ed]">
                 ${Number(inv.amount).toFixed(2)}
               </td>
               <td className="px-4 py-3">
@@ -209,14 +209,14 @@ export function InvoicesTable({
             </tr>
           ))}
         </tbody>
-      </table>
+        </table>
       </div>
 
       <nav
-        className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-4 dark:border-slate-700"
+        className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[#d9dce7] pt-4 dark:border-slate-700"
         aria-label="Invoice pagination"
       >
-        <p className="text-sm text-slate-600 dark:text-slate-400">
+        <p className="text-sm text-[#48698d] dark:text-slate-400">
           Showing {rangeStart}–{rangeEnd} of {total}
         </p>
         {totalPages > 1 && (
@@ -225,18 +225,18 @@ export function InvoicesTable({
               type="button"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="rounded-xl border border-[#d9dce7] bg-[#f7f6fa]/80 px-3 py-1.5 text-sm font-medium text-[#34445a] transition-colors hover:bg-[#f0eff4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2c5282] disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-300 dark:hover:bg-slate-700 dark:focus-visible:outline-[#a9c8ed]"
             >
               Previous
             </button>
-            <span className="text-sm text-slate-600 dark:text-slate-400">
+            <span className="text-sm text-[#48698d] dark:text-slate-400">
               Page {page} of {totalPages}
             </span>
             <button
               type="button"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700"
+              className="rounded-xl border border-[#d9dce7] bg-[#f7f6fa]/80 px-3 py-1.5 text-sm font-medium text-[#34445a] transition-colors hover:bg-[#f0eff4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2c5282] disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-600 dark:bg-slate-800/70 dark:text-slate-300 dark:hover:bg-slate-700 dark:focus-visible:outline-[#a9c8ed]"
             >
               Next
             </button>

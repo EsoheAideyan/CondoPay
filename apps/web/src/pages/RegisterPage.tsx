@@ -2,6 +2,7 @@ import { FormEvent, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { inputClassName, labelClassName } from '../components/AppLayout';
 import { PasswordField } from '../components/PasswordField';
+import { SereneBackground } from '../components/SereneBackground';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { ZoomControls } from '../components/ZoomControls';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +12,41 @@ import {
   isPasswordValid,
   PASSWORD_RULES,
 } from '../lib/passwordRules';
+
+interface LeaseDateFieldProps {
+  id: 'leaseStart' | 'leaseEnd';
+  label: string;
+  value: string;
+  min?: string;
+  onChange: (value: string) => void;
+}
+
+
+function LeaseDateField({
+  id,
+  label,
+  value,
+  min,
+  onChange,
+}: LeaseDateFieldProps) {
+  return (
+    <div>
+      <label htmlFor={id} className={labelClassName}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type="date"
+        required
+        min={min}
+        value={value}
+        className={`${inputClassName} modern-date-input`}
+        onClick={(event) => event.currentTarget.showPicker?.()}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
 
 export default function RegisterPage() {
   const { user, register } = useAuth();
@@ -96,22 +132,24 @@ export default function RegisterPage() {
     ['buildingName', 'Building name', 'text'],
     ['unitNo', 'Unit number', 'text'],
     ['monthlyRent', 'Monthly rent', 'number'],
-    ['leaseStart', 'Lease start', 'date'],
-    ['leaseEnd', 'Lease end', 'date'],
   ] as const;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
-      <div className="flex justify-end gap-2 p-4">
+    <div className="relative min-h-svh overflow-x-hidden bg-[#f8f7fb] text-[#24364b] dark:bg-[#101827] dark:text-slate-100">
+      <SereneBackground />
+      <div className="relative z-20 flex justify-end gap-2 p-4">
         <ZoomControls />
         <ThemeToggle />
       </div>
-      <div className="mx-auto max-w-lg px-4 pb-12">
-        <div className="rounded-xl border border-slate-200 bg-white p-8 shadow-lg dark:border-slate-700 dark:bg-slate-800">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+      <main className="relative z-10 mx-auto max-w-lg px-4 pb-12">
+        <div className="rounded-[2rem] border border-white/80 bg-white/90 p-6 shadow-[0_24px_70px_-28px_rgba(38,52,73,0.38)] backdrop-blur-md sm:p-8 dark:border-slate-700/80 dark:bg-slate-800/90">
+          <p className="mb-2 text-center text-3xl font-bold tracking-tight text-[#2c5282] dark:text-[#a9c8ed]">
+            CondoPay
+          </p>
+          <h1 className="text-2xl font-semibold text-[#263449] dark:text-white">
             Create tenant account
           </h1>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Your account starts as <strong>pending</strong> until an admin
             approves you.
           </p>
@@ -119,7 +157,7 @@ export default function RegisterPage() {
           {error && (
             <p
               role="alert"
-              className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+              className="mt-4 rounded-2xl border border-red-200 bg-red-50/90 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/90 dark:text-red-300"
             >
               {error}
             </p>
@@ -145,6 +183,20 @@ export default function RegisterPage() {
               </div>
             ))}
 
+            <LeaseDateField
+              id="leaseStart"
+              label="Lease start"
+              value={form.leaseStart}
+              onChange={(value) => update('leaseStart', value)}
+            />
+            <LeaseDateField
+              id="leaseEnd"
+              label="Lease end"
+              value={form.leaseEnd}
+              min={form.leaseStart || undefined}
+              onChange={(value) => update('leaseEnd', value)}
+            />
+
             <div className="sm:col-span-2">
               <PasswordField
                 id="password"
@@ -158,7 +210,7 @@ export default function RegisterPage() {
               {showChecklist && (
                 <ul
                   id="password-requirements"
-                  className="mt-3 space-y-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3 text-sm dark:border-slate-600 dark:bg-slate-900/50"
+                  className="mt-3 space-y-1.5 rounded-2xl border border-[#e7e4e8] bg-[#f5f3f6]/90 px-3 py-3 text-sm dark:border-slate-600 dark:bg-slate-900/50"
                   aria-live="polite"
                 >
                   {PASSWORD_RULES.map((rule) => {
@@ -169,7 +221,7 @@ export default function RegisterPage() {
                         className={
                           ok
                             ? 'text-green-700 dark:text-green-400'
-                            : 'text-slate-600 dark:text-slate-400'
+                            : 'text-[#52657b] dark:text-slate-400'
                         }
                       >
                         <span aria-hidden className="mr-2 font-medium">
@@ -230,7 +282,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="sm:col-span-2 rounded-lg bg-blue-600 py-2 font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+              className="sm:col-span-2 rounded-full bg-[#a44c2d] py-3 font-semibold text-white shadow-lg shadow-[#a44c2d]/20 transition hover:bg-[#8e3f24] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8e3f24] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100"
             >
               {loading ? 'Creating account…' : 'Register'}
             </button>
@@ -239,13 +291,17 @@ export default function RegisterPage() {
           <p className="mt-4 text-center text-sm">
             <Link
               to="/login"
-              className="text-blue-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400"
+              className="font-semibold text-[#2c5282] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2c5282] dark:text-[#a9c8ed]"
             >
               Back to login
             </Link>
           </p>
         </div>
-      </div>
+      </main>
+
+      <footer className="relative z-10 px-4 py-2 text-center text-xs text-slate-500 dark:text-slate-400">
+        © {new Date().getFullYear()} CondoPay · Built for clearer rent management
+      </footer>
     </div>
   );
 }
