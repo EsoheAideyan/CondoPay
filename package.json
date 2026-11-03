@@ -17,5 +17,8 @@
     "db:seed": "npm run db:seed -w @condopay/api",
     "dev:api": "npm run dev -w @condopay/api",
     "dev:web": "npm run dev -w @condopay/web"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }

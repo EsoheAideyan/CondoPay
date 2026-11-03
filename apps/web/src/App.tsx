@@ -13,11 +13,13 @@ import DashboardPage from './pages/DashboardPage';
 import LoginPage from './pages/LoginPage';
 import MaintenancePage from './pages/MaintenancePage';
 import RegisterPage from './pages/RegisterPage';
+import { Analytics } from "@vercel/analytics/next"
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+      <Analytics />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route

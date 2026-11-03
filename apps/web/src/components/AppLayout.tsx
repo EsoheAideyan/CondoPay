@@ -5,6 +5,7 @@ import { formatUserSubtitle } from '../lib/formatUser';
 import { SereneBackground } from './SereneBackground';
 import { ThemeToggle } from './ThemeToggle';
 import { ZoomControls } from './ZoomControls';
+import { Analytics } from "@vercel/analytics/next"
 
 interface AppLayoutProps {
   title: string;
